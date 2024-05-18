@@ -3,22 +3,32 @@
 
 #include <SFML/Graphics.hpp>
 #include "Sprite.h"
-#include <string>
+#include "Collision.h"
 
 class Fireball {
-public:
-    Fireball(const sf::Vector2f& position, const sf::Vector2f& direction, float width, float height);
-    void update();
-    void draw(class Window& window);
-    sf::FloatRect getBounds() const;
-    sf::Sprite getSprite() {
-        return sprite.getSprite();
-    }
-
 private:
     Sprite sprite;
-    sf::Texture texture;
-    sf::Vector2f direction;
+    bool moveRight;
+    float speed;
+    Collision collision;
+
+public:
+    Fireball(float startX, float startY, bool moveRight, float speed);
+
+    void update(float deltaTime);
+    void render(sf::RenderWindow& window);
+    sf::FloatRect getBounds() const;
+    bool checkCollision(const sf::FloatRect& otherBounds) const;
+
+    void toggleCollisionBox();
+    void setCollisionBoxVisibility(bool visibility);
+
+    void renderImGui()
+    {
+        sprite.ImGuiStart("Fireball Controller");
+        sprite.ImGuiSpriteTexture();
+        sprite.ImGuiEnd();
+    }
 };
 
-#endif
+#endif // FIREBALL_H

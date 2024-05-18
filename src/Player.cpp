@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "Window.h"
 
-Player::Player() {
+Player::Player() : health(3), isDead(false) {
     sprite.loadTextureFromFile("Assets/Star_Green.png");
     sprite.setScale(16, 16);
 }
@@ -41,6 +41,22 @@ void Player::handleInput() {
 }
 
 
+void Player::tageDamage(int dmg)
+{
+    health -= dmg;
+}
+
+bool Player::isPlayerDead()
+{
+    if (health <= 0 || health == 0)
+        isDead = true;
+
+    return isDead;
+}
+int Player::getPlayerHealth()
+{
+    return health;
+}
 
 void Player::renderImGui() {
     sprite.ImGuiStart("Player Controller");

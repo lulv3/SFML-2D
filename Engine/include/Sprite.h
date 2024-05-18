@@ -61,6 +61,10 @@ public:
         window.draw(sprite);
         collision.draw(window);
     }
+    void drawConst(sf::RenderWindow& window) const{
+        window.draw(sprite);
+        collision.draw(window);
+    }
 
     // Bewegung der Sprite
     void move(float offsetX, float offsetY) {
@@ -74,10 +78,12 @@ public:
         return collisionBox.intersects(otherBounds);
     }
 
+	// TODO: Implement delete Sprite and Texture method
+
 #pragma region ImGui
     void ImGuiStart()
     {
-        ImGui::Begin("Sprite Control Panel");
+        ImGui::Begin("Sprite Controller");
     }
     void ImGuiStart(const char* name)
     {
@@ -217,6 +223,7 @@ public:
     {
         return collision;
     }
+
     float getSpeed()
     {
         return speed;
@@ -242,7 +249,8 @@ public:
     }
 
     sf::FloatRect getGlobalBounds() const {
-        return sprite.getGlobalBounds();
+        // sprite.getGlobalBounds(); <--- Old
+        return collision.getCollisionBox();
     }
 
 #pragma endregion

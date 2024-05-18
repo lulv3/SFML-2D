@@ -1,21 +1,35 @@
 #include "Fireball.h"
-#include "Window.h"
 
-Fireball::Fireball(const sf::Vector2f& position, const sf::Vector2f& direction, float width, float height)
-    : direction(direction), sprite() {
-    sprite.loadTextureFromFile("Assets/Game/Star_Red.png");
-    sprite.setPosition(position.x, position.y);
-    sprite.setScale(width, height);
+Fireball::Fireball(float startX, float startY, bool moveRight, float speed)
+    : moveRight(moveRight), speed(speed) {
+    sprite.loadTextureFromFile("fireball.png"); // Pfad zur Fireball-Textur
+    sprite.setPosition(startX, startY);
+    collision.update(sprite.getSprite());
 }
 
-void Fireball::update() {
-    sprite.move(direction.x, direction.y);
+void Fireball::update(float deltaTime) {
+    float offsetX = moveRight ? speed * deltaTime : -speed * deltaTime;
+    sprite.move(offsetX, 0);
+    collision.update(sprite.getSprite());
 }
 
-void Fireball::draw(Window& window) {
-    window.draw(sprite.getSprite());
+void Fireball::render(sf::RenderWindow& window) {
+    sprite.draw(window);
+    collision.draw(window); // Zeichne die Kollisionsbox, wenn aktiviert
 }
 
 sf::FloatRect Fireball::getBounds() const {
     return sprite.getGlobalBounds();
+}
+
+bool Fireball::checkCollision(const sf::FloatRect& otherBounds) const {
+    return collision.checkCollision(otherBounds);
+}
+
+void Fireball::toggleCollisionBox() {
+    collision.toggleCollisionBoxVisibility();
+}
+
+void Fireball::setCollisionBoxVisibility(bool visibility) {
+    collision.setCollisionBoxVisibility(visibility);
 }

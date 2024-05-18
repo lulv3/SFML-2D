@@ -1,12 +1,23 @@
+#ifndef SPRITE_H
+#define SPRITE_H
+
 #include <SFML/Graphics.hpp>
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include "missing_fix.h"
 #include "Collision.h"
+#include "TextureManager.h"
+
+#pragma region Texture Manager
+
+#pragma endregion
+
 
 class Sprite {
 private:
     missing_fix engine_missing;
+    TextureManager textureManager;
+    bool showTexturePicker = false;
 
     sf::Texture texture;
     sf::Sprite sprite;
@@ -18,10 +29,13 @@ private:
     sf::FloatRect collisionBox;
 
 public:
-    Sprite() : width(16), height(16), showCollisionBox(false), speed(0.3f) 
+    Sprite() : width(16), height(16), showCollisionBox(false), speed(0.3f)
     {
         setCollisionBox(getLocalBounds());
         setCollisionBoxSize(width, height);
+
+        // Load Example Textures
+        textureManager.initialize();
     }
 
 #pragma region Base
@@ -72,8 +86,33 @@ public:
 
     void ImGuiSpriteTexture()
     {
+        // ImGui::Text("Texture:");
+        // ImGui::ImageButton((sf::Texture*)texture.getNativeHandle(), ImVec2(64, 64));
         ImGui::Text("Texture:");
-        ImGui::ImageButton((sf::Texture*)texture.getNativeHandle(), ImVec2(64, 64));
+        if (ImGui::ImageButton((void*)(intptr_t)texture.getNativeHandle(), ImVec2(64, 64))) {
+            showTexturePicker = true;
+        }
+
+        if (showTexturePicker) {
+            bool open = true;
+            if (ImGui::Begin("Select Texture", &open)) {
+                for (size_t i = 0; i < textureManager.getTextureCount(); ++i) {
+                    if (ImGui::ImageButton((void*)(intptr_t)textureManager.getTexture(i).getNativeHandle(), ImVec2(64, 64))) {
+                        texture = textureManager.getTexture(i);
+                        sprite.setTexture(texture);
+                        showTexturePicker = false;
+                    }
+                    ImGui::SameLine();
+                    ImGui::Text(textureManager.getTextureName(i).c_str());
+                }
+                ImGui::End();
+            }
+            if (!open) {
+                showTexturePicker = false;
+            }
+        }
+
+        
     }
     void ImGuiSpritePosition()
     {
@@ -122,7 +161,7 @@ public:
 
     void ImGuiEnd()
     {
-		ImGui::End();
+        ImGui::End();
     }
 #pragma endregion
 
@@ -172,7 +211,7 @@ public:
 #pragma endregion
 
 #pragma region Getter
-    
+
 
     Collision& getCollision()
     {
@@ -211,3 +250,6 @@ public:
 
     // Andere benutzerdefinierte Funktionen hier hinzufügen, je nach Bedarf
 };
+
+
+#endif // !SPRITE_H

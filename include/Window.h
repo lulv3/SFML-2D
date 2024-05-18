@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <imgui.h>
+#include <imgui-SFML.h>
 
 class Window {
 public:
@@ -21,9 +23,14 @@ public:
         return window.getSize();
     }
 
+    void renderImGui();
+
+
 private:
     sf::RenderWindow window;
     sf::View view;
+    sf::Color backgroundColor;
+	bool imguiEnabled;
 };
 
 #endif

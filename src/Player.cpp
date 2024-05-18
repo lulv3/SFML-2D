@@ -46,7 +46,7 @@ void Player::renderImGui() {
     sprite.ImGuiStart("Player Controller");
     sprite.ImGuiSpriteTexture();
     ImGui::NewLine();
-    ImGui::SliderFloat("Speed:", &speed, 0.0f, 100.0f);
+    ImGui::SliderFloat("Speed:", &speed, 0.0f, 5.0f);
     ImGui::NewLine();
     sprite.ImGuiSpritePosition();
     sprite.ImGuiSpriteOrigin();

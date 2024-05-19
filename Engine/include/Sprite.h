@@ -19,7 +19,8 @@ private:
     TextureManager textureManager;
     bool showTexturePicker = false;
 
-    sf::Texture texture;
+    std::unique_ptr<sf::Texture> texture;
+    sf::Texture p_texture;
     sf::Sprite sprite;
     Collision collision;
     float width;
@@ -31,7 +32,7 @@ private:
 public:
     Sprite() : width(16), height(16), showCollisionBox(false), speed(0.3f)
     {
-        setCollisionBox(getLocalBounds());
+        setCollisionBox(sprite.getGlobalBounds());
         setCollisionBoxSize(width, height);
 
         // Load Example Textures
@@ -42,17 +43,17 @@ public:
 
     // Laden der Textur aus einer Datei
     bool loadTextureFromFile(const std::string& filename) {
-        if (!texture.loadFromFile(filename)) {
+        if (!p_texture.loadFromFile(filename)) {
             if (!engine_missing.load_missing_texture()) {
                 return false;
             }
-            texture = engine_missing.get_missing_texture(width, height);
+            p_texture = engine_missing.get_missing_texture(width, height);
         }
 
-        sprite.setTexture(texture);
+        sprite.setTexture(p_texture);
         collision.update(sprite);
-        width = static_cast<float>(texture.getSize().x);
-        height = static_cast<float>(texture.getSize().y);
+        width = static_cast<float>(p_texture.getSize().x);
+        height = static_cast<float>(p_texture.getSize().y);
         return true;
     }
 
@@ -72,13 +73,18 @@ public:
         collision.update(sprite);
     }
     void toggleCollisionBox() {
-        showCollisionBox = !showCollisionBox;
+        collision.setCollisionBoxVisibility(showCollisionBox);
     }
     bool checkCollision(const sf::FloatRect& otherBounds) const {
         return collisionBox.intersects(otherBounds);
     }
 
 	// TODO: Implement delete Sprite and Texture method
+    void clear() {
+        texture.reset(); // Lösche die Textur und gib den Speicher frei
+        sprite.setTexture(p_texture); // Setze den Sprite auf eine leere Textur
+        collision.clear(); // Lösche die Kollisionsbox
+    }
 
 #pragma region ImGui
     void ImGuiStart()
@@ -95,7 +101,7 @@ public:
         // ImGui::Text("Texture:");
         // ImGui::ImageButton((sf::Texture*)texture.getNativeHandle(), ImVec2(64, 64));
         ImGui::Text("Texture:");
-        if (ImGui::ImageButton((void*)(intptr_t)texture.getNativeHandle(), ImVec2(64, 64))) {
+        if (ImGui::ImageButton((void*)(intptr_t)p_texture.getNativeHandle(), ImVec2(64, 64))) {
             showTexturePicker = true;
         }
 
@@ -104,8 +110,8 @@ public:
             if (ImGui::Begin("Select Texture", &open)) {
                 for (size_t i = 0; i < textureManager.getTextureCount(); ++i) {
                     if (ImGui::ImageButton((void*)(intptr_t)textureManager.getTexture(i).getNativeHandle(), ImVec2(64, 64))) {
-                        texture = textureManager.getTexture(i);
-                        sprite.setTexture(texture);
+                        p_texture = textureManager.getTexture(i);
+                        sprite.setTexture(p_texture);
                         showTexturePicker = false;
                     }
                     ImGui::SameLine();
@@ -153,7 +159,7 @@ public:
     {
         if (ImGui::Checkbox("Show Collision Box", &showCollisionBox)) {
             // Do something when checkbox state changes
-            collision.setCollisionBoxVisibility(showCollisionBox);
+            toggleCollisionBox();
         }
 
         if (showCollisionBox) {
@@ -183,6 +189,8 @@ public:
         collisionBox.width = width;
         collisionBox.height = height;
     }
+
+
     void setCollisionBox(const sf::FloatRect& box) {
         collisionBox = box;
     }

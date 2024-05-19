@@ -14,6 +14,18 @@ private:
 
 public:
     Fireball(float startX, float startY, bool moveRight, float speed);
+    Fireball(const Fireball& other) {
+        // Kopieren Sie hier die Eigenschaften von 'other' in diese Instanz
+    }
+    Fireball& operator=(const Fireball& other) {
+        // Prüfen, ob es sich um dieselbe Instanz handelt
+        if (this == &other)
+            return *this;
+
+        // Kopieren Sie hier die Eigenschaften von 'other' in diese Instanz
+
+        return *this;
+    }
 
     void update(float deltaTime);
     void render(sf::RenderWindow& window);
@@ -22,6 +34,7 @@ public:
 
     void toggleCollisionBox();
     void setCollisionBoxVisibility(bool visibility);
+    void clear();
 
     void renderImGui()
     {

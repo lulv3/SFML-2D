@@ -22,6 +22,7 @@ private:
     Player player;
     std::vector<Fireball> fireballs;
 
+    bool collisionsVisible;
 
     sf::Time timeSinceLastSpawn;
     sf::Time spawnInterval;
@@ -42,6 +43,7 @@ private:
     void checkCollisions();
     void init();
     void spawnFireball();
+    void deleteFireball(int index);
 };
 
 #endif // GAME_H

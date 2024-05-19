@@ -13,9 +13,12 @@ class Player {
 public:
     Player();
     void move(const sf::Vector2f& direction);
-    void draw(class Window& window);
+    void draw(sf::RenderWindow& window);
     sf::FloatRect getBounds() const;
     sf::FloatRect getCollisionBox() const;
+    bool checkCollision(const sf::FloatRect& otherBounds) const;
+
+    void toggleCollisionBox();
     sf::Sprite getSprite() const {
         return sprite.getSprite();
     }
@@ -26,6 +29,9 @@ public:
     void tageDamage(int dmg);
     bool isPlayerDead();
     int getPlayerHealth();
+    void setSize(float sizeX, float sizeY);
+    void update();
+    void setCollisionBoxVisibility(bool visibility);
 
 private:
     Sprite sprite;
@@ -35,7 +41,6 @@ private:
     float speed = 0.3f;
     float width;
     float height;
-    bool collisionVisible;
     int health;
     bool isDead;
 };

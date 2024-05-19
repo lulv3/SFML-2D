@@ -9,6 +9,7 @@
 class Window {
 public:
     Window(int width, int height, const std::string& title);
+    void update();
     void beginDraw();
     void endDraw();
     bool isOpen() const;
@@ -31,6 +32,7 @@ private:
     sf::View view;
     sf::Color backgroundColor;
 	bool imguiEnabled;
+    float viewZoom;
 };
 
 #endif

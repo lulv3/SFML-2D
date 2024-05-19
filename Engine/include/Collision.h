@@ -33,6 +33,11 @@ public:
         return collisionBox;
     }
 
+    void clear() 
+    {
+        collisionBox = sf::FloatRect();
+    }
+
     // Schalte die Sichtbarkeit der Kollisionsbox um
     void toggleCollisionBoxVisibility() {
         showCollisionBox = !showCollisionBox;
@@ -50,7 +55,7 @@ public:
             rect.setPosition(collisionBox.left, collisionBox.top);
             rect.setFillColor(sf::Color::Transparent);
             rect.setOutlineThickness(1.f);
-            rect.setOutlineColor(sf::Color::Red);
+            rect.setOutlineColor(sf::Color::Magenta);
             window.draw(rect);
         }
     }
@@ -58,9 +63,6 @@ public:
     // ImGui-Steuerungen für die Kollisionsbox-Eigenschaften
     void imguiControlPanel() {
         ImGui::Begin("Collision Control Panel");
-        if (ImGui::Checkbox("Show Collision Box", &showCollisionBox)) {
-            // Do something when checkbox state changes
-        }
 
         ImGui::Text("Collision Box:");
         ImGui::Text("Left: %.2f, Top: %.2f, Width: %.2f, Height: %.2f",

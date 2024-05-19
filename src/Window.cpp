@@ -2,7 +2,7 @@
 
 Window::Window(int width, int height, const std::string& title)
     : window(sf::VideoMode(width, height), title), view(sf::FloatRect(0.f, 0.f, static_cast<float>(width), static_cast<float>(height))), 
-    imguiEnabled(true), backgroundColor(sf::Color::Black){
+    imguiEnabled(true), backgroundColor(sf::Color::Black), viewZoom(1){
     window.setView(view);
 }
 
@@ -10,6 +10,15 @@ Window::Window(int width, int height, const std::string& title)
 void Window::renderImGui()
 {
     ImGui::Begin("Window Controller");
+
+    // Zoom Factor Slider with reduced sensitivity
+    float minZoomFactor = 0.5f; // Min zoom factor
+    float maxZoomFactor = 2.0f; // Max zoom factor
+    float stepZoomFactor = 0.1f; // Step size for zoom factor
+
+    // ImGui::SliderFloat("Zoom Factor", &viewZoom, minZoomFactor, maxZoomFactor, "%.1f", ImGuiSliderFlags_Logarithmic);
+
+    ImGui::SliderFloat("Zoom", &viewZoom, 0.5f, 2.0f);
 
     ImGui::NewLine();
     // Background Color
@@ -65,6 +74,12 @@ sf::RenderWindow& Window::getWindow() {
     return window;
 }
 void Window::zoomView(float factor) {
-    view.zoom(factor);
+    viewZoom = factor;
+    view.zoom(viewZoom);
     window.setView(view);
+}
+
+void Window::update()
+{
+    // zoomView(viewZoom);
 }

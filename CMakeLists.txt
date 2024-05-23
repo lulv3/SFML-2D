@@ -16,6 +16,13 @@ set(IMGUI_INCLUDE_DIR "${IMGUI_ROOT_DIR}")
 file(GLOB IMGUI_HEADERS "${IMGUI_ROOT_DIR}/*.h")
 file(GLOB IMGUI_SOURCES "${IMGUI_ROOT_DIR}/*.cpp")
 
+# ImGui-Docking
+set(IMGUI_DOCKING_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui-docking/imgui/")
+set(IMGUI_DOCKING_INCLUDE_DIR "${IMGUI_DOCKING_ROOT_DIR}")
+file(GLOB IMGUI_DOCKING_HEADERS "${IMGUI_DOCKING_ROOT_DIR}/imgui/*.h")
+file(GLOB IMGUI_DOCKING_SOURCES "${IMGUI_DOCKING_ROOT_DIR}/imgui/*.cpp")
+
+
 # Find SFML
 find_package(SFML COMPONENTS graphics REQUIRED)
 
@@ -32,10 +39,10 @@ file(GLOB ENGINE_HEADERS ${ENGINE_INCLUDE_DIR}/*.h)
 file(GLOB ENGINE_SOURCES ${ENGINE_SRC_DIR}/*.cpp)
 
 # Include directories
-include_directories(${SFML_INCLUDE_DIR} ${IMGUI_INCLUDE_DIR} ${GAME_INCLUDE_DIR} ${ENGINE_INCLUDE_DIR})
+include_directories(${SFML_INCLUDE_DIR} ${IMGUI_INCLUDE_DIR} ${IMGUI_DOCKING_INCLUDE_DIR} ${GAME_INCLUDE_DIR} ${ENGINE_INCLUDE_DIR})
 
 # Executable
-add_executable(Platformer ${GAME_HEADERS} ${GAME_SOURCES} ${ENGINE_SOURCES} ${IMGUI_HEADERS} ${IMGUI_SOURCES})
+add_executable(Platformer ${GAME_HEADERS} ${GAME_SOURCES} ${ENGINE_SOURCES} ${IMGUI_HEADERS} ${IMGUI_SOURCES} ${IMGUI_DOCKING_HEADERS} ${IMGUI_DOCKING_SOURCES})
 
 # Link gegen die SFML-Bibliotheken
 target_link_libraries(Platformer sfml-graphics sfml-window sfml-system openGL32)

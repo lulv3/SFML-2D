@@ -3,42 +3,43 @@
 Game::Game(int screenWidth, int screenHeight, const std::string& title)
     : window(screenWidth, screenHeight, title), fireballTimer(), score(0), isGameOver(false),
     timeSinceLastSpawn(sf::Time::Zero), spawnInterval(sf::seconds(2.f)), fireballSpeed(600.f), fireballDirection(1){
-    // Setze die Fensteransicht auf den gesamten Bildschirm
+    //Set window view to full screen
+    window.adjustView();
 }
 
 void Game::init()
 {
-    ImGui::SFML::Init();
-    // Setup ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
-}
-void Game::run() {
-    init();
-    while (window.isOpen()) {
-        handleEvents();
-        handleInput();
-        update();
-        render();
-    }
-    ImGui::SFML::Shutdown();
+    // TODO: Fix ImGui initialization and add Docking to the ConfigFlags
+	
+    ImGui::SFML::Init(window.getWindow(), true);
+    ImGuiIO io = ImGui::GetIO(); (void)io;
     
 }
 
-void Game::handleEvents() {
-    sf::Event event;
-    while (window.pollEvent(event)) {
-        ImGui::SFML::ProcessEvent(event);
-        if (event.type == sf::Event::Closed)
-            window.close();
+void Game::run() {
+	init();                                     // Initialize the game and for example ImGui
+    while (window.isOpen()) {
+		handleEvents();                         // Handle all events
+		handleInput();                          // Handle all input events
+		update();                               // Update the game state
+		render();                               // Render the game
     }
-    ImGui::SFML::Update(window.getWindow(), clock.restart());
+	ImGui::SFML::Shutdown();                    // Shutdown the game and engine
 }
+
+void Game::handleEvents() {
+	sf::Event event;                                            // Create an event object
+    while (window.pollEvent(event)) {
+        ImGui::SFML::ProcessEvent(event);                       // Handle the ImGui events
+        if (event.type == sf::Event::Closed) 
+			window.close();                                     // Close/Destroy the window if the window was closed
+    }
+	ImGui::SFML::Update(window.getWindow(), clock.restart());   // Update ImGui 
+}
+
 void Game::handleInput()
 {
-    player.handleInput();
+    player.handleInput();                                       // Handle the Player Input Events
 }
 
 void Game::update() {
@@ -59,6 +60,7 @@ void Game::update() {
             fireballTimer.restart();
         }
 
+        // TODO: Fix the del method
         // Remove off-screen fireballs
         fireballs.erase(std::remove_if(fireballs.begin(), fireballs.end(),
             [this](const Fireball& fireball) {
@@ -69,7 +71,7 @@ void Game::update() {
 
         checkCollisions();
 
-        // Überprüfen, ob das Spiel vorbei ist
+        // Check if the game is over
         if(player.isPlayerDead())
 			isGameOver = true;
     }
@@ -79,11 +81,11 @@ void Game::update() {
 void Game::render() {
     window.beginDraw();
 
-    // Spieler zeichnen
+    // Draw players
     //window.draw(player.getSprite());
     player.draw(window.getWindow());
 
-    // Fireballs zeichnen
+    // Draw fireballs
     for (auto& fireball : fireballs) { // maybe as const
         fireball.render(window.getWindow());
     }
@@ -105,6 +107,7 @@ void Game::render() {
 
     window.endDraw();
 }
+
 void Game::checkCollisions() {
 
     if (collisionsVisible)
@@ -119,7 +122,7 @@ void Game::checkCollisions() {
         const auto& fireball = fireballs[i];
         if (fireball.checkCollision(player.getBounds())) {
             player.tageDamage(1);
-            // Lösche den Fireball, der mit dem Spieler kollidiert ist
+            // Delete the fireball that collided with the player
             deleteFireball(i);
         }
     }
@@ -127,14 +130,14 @@ void Game::checkCollisions() {
 
 void Game::deleteFireball(int index) {
     if (index >= 0 && index < fireballs.size()) {
-        // Lösche den Fireball aus der Liste
+        // Delete the Fireball from the list
         fireballs.erase(fireballs.begin() + index);
     }
 }
 
 void Game::spawnFireball() {
-    float minSpeed = 300.0f; // Beispiel: Mindestgeschwindigkeit von 100 Pixeln pro Sekunde
-    float maxSpeed = 1200.0f; // Beispiel: Höchstgeschwindigkeit von 300 Pixeln pro Sekunde
+    float minSpeed = 300.0f;    // Example: Minimum speed of 100 pixels per second
+    float maxSpeed = 1200.0f;   // Example: Maximum speed of 300 pixels per second
     float randomSpeed = minSpeed + static_cast<float>(rand()) / (RAND_MAX / (maxSpeed - minSpeed + 1));
 
     float startY = static_cast<float>(rand() % window.getSize().y);
